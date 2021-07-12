@@ -26,6 +26,7 @@ public class PenyewaanBuku {
     private JButton buttonKembali;
     private JButton buttonEdit;
     private JButton buttonDelete;
+    private JLabel fieldID;
 
     //kebutuhan untuk menyambungkan database ke gui form kita
     static final String JDBC_DRIVER = "com.mysql.cj.jdbc.Driver";
@@ -55,6 +56,8 @@ public class PenyewaanBuku {
     }
 
     public PenyewaanBuku() {
+        //
+        fieldID.setVisible(false);
 
         //membuat variabel 'tampilkanTanggal' untuk menampung
         //hasil konversi string dari tanggalTerkini
@@ -80,9 +83,7 @@ public class PenyewaanBuku {
         //menampilkan tabel dari database
         show();
 
-        //ketika tombol simpan di klik
-        //ambil isi dari textfield judulBuku
-
+        //ketika tombol simpan di-klik
         buttonSimpan.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -90,14 +91,44 @@ public class PenyewaanBuku {
                 String tampungJudul=fieldBuku.getText().toString();
                 fieldBuku.setText("");
 
-                //
+                //tanggap pinjam diambil dari tanggalTerkini
                 LocalDate tampungPinjam=tanggalTerkini;
 
-                //
+                //tanggal harus kembali , dimana maksimal peminjaman buku
+                //adalah 7 hari sejak pinjam
                 LocalDate tampungHarusKembali=tanggalTerkini.plusDays(7);
 
+                //memasukkan ke dalam tabel kemudian ditampilkan data yang
+                //baru saja dimasukkan
                 insert(tampungJudul,tampungPinjam,tampungHarusKembali);
                 show();
+            }
+        });
+
+        //aksi yang akan dijalankan
+        // ketika tombol 'buttonKembali' di klik
+        buttonKembali.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
+            }
+        });
+
+        //aksi yang akan dijalankan
+        // ketika tombol 'buttonEdit' di klik
+        buttonEdit.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
+            }
+        });
+
+        //aksi yang akan dijalankan
+        // ketika tombol 'buttonDelete' di klik
+        buttonDelete.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
             }
         });
     }
@@ -184,7 +215,7 @@ public class PenyewaanBuku {
     }
 
     //update ketika tombol 'btnKembaliBuku' di-klik
-    public void update(LocalDate tanggalKembali, int denda,int biayaSewa){
+    public void update(LocalDate tanggalKembali, int denda,int biayaSewa, int id){
         try {
             //register driver yang akan dipakai
             Class.forName(JDBC_DRIVER);
@@ -196,6 +227,18 @@ public class PenyewaanBuku {
             String sql="UPDATE sewabuku SET tanggal_kembali=? ,denda=? , biaya_sewa=? WHERE id=?";
 
             //prepared statement untuk update
+            PreparedStatement prstmt=sambungkan.prepareStatement(sql);
+            prstmt.setString(1, String.valueOf(tanggalKembali));
+            prstmt.setString(2, String.valueOf(denda));
+            prstmt.setString(3, String.valueOf(biayaSewa));
+            prstmt.setString(4, String.valueOf(id));
+
+            prstmt.executeUpdate();
+
+            prstmt.close();
+            sambungkan.close();
+
+
 
         } catch (SQLException throwables) {
             throwables.printStackTrace();
