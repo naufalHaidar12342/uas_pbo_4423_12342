@@ -56,7 +56,7 @@ public class PenyewaanBuku {
     }
 
     public PenyewaanBuku() {
-        //
+        //menyembunyikan fieldID
         fieldID.setVisible(false);
 
         //membuat variabel 'tampilkanTanggal' untuk menampung
@@ -77,7 +77,6 @@ public class PenyewaanBuku {
 
         //set value milik textfield 'fieldRupiah'
         fieldRupiah.setText("5.000");
-
 
 
         //menampilkan tabel dari database
@@ -132,6 +131,7 @@ public class PenyewaanBuku {
             }
         });
     }
+
     //insert ketika tombol 'Simpan' di-klik
     public void insert(String judulBuku, LocalDate tanggalPinjam, LocalDate wajibKembali ){
         try {
