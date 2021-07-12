@@ -38,6 +38,8 @@ public class PenyewaanBuku {
     static Statement statmt;
     static ResultSet setHasil;
 
+    static final int biayaSewa=5000;
+
     //Memanggil method LocalDate untuk mengambil tanggal dari sistem komputer kita
     //lalu disimpan dalam variabel 'tanggalTerkini'
     LocalDate tanggalTerkini=LocalDate.now();
@@ -87,7 +89,7 @@ public class PenyewaanBuku {
             @Override
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
-                String tampungJudul=fieldBuku.getText().toString();
+                String tampungJudul= fieldBuku.getText();
                 fieldBuku.setText("");
 
                 //tanggap pinjam diambil dari tanggalTerkini
@@ -106,21 +108,17 @@ public class PenyewaanBuku {
 
         //aksi yang akan dijalankan
         // ketika tombol 'buttonKembali' di klik
+        // (buttonKembali digunakan untuk mengembalikan buku)
         buttonKembali.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
+
+
             }
         });
 
-        //aksi yang akan dijalankan
-        // ketika tombol 'buttonEdit' di klik
-        buttonEdit.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                super.mouseClicked(e);
-            }
-        });
+
 
         //aksi yang akan dijalankan
         // ketika tombol 'buttonDelete' di klik
@@ -130,7 +128,55 @@ public class PenyewaanBuku {
                 super.mouseClicked(e);
             }
         });
+        //aksi yang akan dijalankan ketika tabel di klik
+        tableBuku.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
+                int barisDipilih=tableBuku.getSelectedRow();
+                if (barisDipilih!=-1){
+                    //jika barisDipilih valuenya bukan -1 (tidak ada baris yang dipilih)
+                    //gunakan mouseListener milik buttonEdit
+
+                    //buttonEdit akan mengambil value dari barisDipilih
+                    buttonEdit.addMouseListener(new MouseAdapter() {
+                        @Override
+                        public void mouseClicked(MouseEvent e) {
+                            //super.mouseClicked(e);
+                            fieldBuku.setText(tableBuku.getValueAt(barisDipilih,1).toString());
+
+                        }
+                    });
+                }
+
+
+            }
+        });
     }
+    //menghitung perbedaan hari dari dua tanggal
+    public long selisihHari(LocalDate harusKembali, LocalDate waktuKembaliAslinya){
+        try {
+            //register driver yang akan dipakai
+            Class.forName(JDBC_DRIVER);
+
+            //menyambungkan ke database
+            sambungkan= DriverManager.getConnection(DB_URL,USER,PASS);
+
+            //perintah sql untuk mengambil tanggal harus kembali
+            String sql = "SELECT tanggal_harus_kembali FROM sewabuku";
+
+        }catch (SQLException | ClassNotFoundException throwables) {
+            throwables.printStackTrace();
+        }
+
+
+        long bedaHari=1-2;
+
+        return Math.abs(bedaHari);
+    }
+
+
+
 
     //insert ketika tombol 'Simpan' di-klik
     public void insert(String judulBuku, LocalDate tanggalPinjam, LocalDate wajibKembali ){
@@ -156,10 +202,8 @@ public class PenyewaanBuku {
             sambungkan.close();
 
 
-        }catch (SQLException throwables) {
+        }catch (SQLException | ClassNotFoundException throwables) {
             throwables.printStackTrace();
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
         }
     }
 
@@ -208,7 +252,7 @@ public class PenyewaanBuku {
             //set table model tadi ke dalam JTables
             tableBuku.setModel(kerangkaTabel);
         }catch (SQLException eksepsi){
-            eksepsi.getMessage();
+            System.out.println(eksepsi.getMessage());
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
@@ -240,10 +284,8 @@ public class PenyewaanBuku {
 
 
 
-        } catch (SQLException throwables) {
+        } catch (SQLException | ClassNotFoundException throwables) {
             throwables.printStackTrace();
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
         }
     }
 }
