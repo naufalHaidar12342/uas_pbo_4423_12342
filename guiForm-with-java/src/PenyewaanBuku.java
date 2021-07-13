@@ -126,6 +126,8 @@ public class PenyewaanBuku {
             @Override
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
+                deleteLastRecord();
+                show();
             }
         });
         //aksi yang akan dijalankan ketika tabel di klik
@@ -164,6 +166,8 @@ public class PenyewaanBuku {
 
             //perintah sql untuk mengambil tanggal harus kembali
             String sql = "SELECT tanggal_harus_kembali FROM sewabuku";
+
+            PreparedStatement prstmt=sambungkan.prepareStatement(sql);
 
         }catch (SQLException | ClassNotFoundException throwables) {
             throwables.printStackTrace();
@@ -280,6 +284,30 @@ public class PenyewaanBuku {
             prstmt.executeUpdate();
 
             prstmt.close();
+            sambungkan.close();
+
+
+
+        } catch (SQLException | ClassNotFoundException throwables) {
+            throwables.printStackTrace();
+        }
+    }
+
+    //delete record terakhir yang dimasukkan, berdasarkan id
+    public void deleteLastRecord(){
+        try {
+            //register driver yang akan dipakai
+            Class.forName(JDBC_DRIVER);
+
+            //menyambungkan ke database
+            sambungkan= DriverManager.getConnection(DB_URL,USER,PASS);
+
+            //perintah sql
+            String sql="DELETE FROM sewabuku ORDER BY id DESC LIMIT 1 ";
+            statmt=sambungkan.createStatement();
+            statmt.executeUpdate(sql);
+
+            statmt.close();
             sambungkan.close();
 
 
